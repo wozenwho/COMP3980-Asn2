@@ -36,7 +36,7 @@ int failedLoops = 0;
 unsigned int xPosition = 0;
 unsigned int yPosition = 0;
 
-BOOL reading = TRUE;
+BOOL reading = FALSE;
 
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -54,7 +54,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam
 	PAINTSTRUCT paintstruct;
 	HDC hdc = BeginPaint(hwnd, &paintstruct);
 
-	
 
 	Wcl.cbSize = sizeof(WNDCLASSEX);
 	Wcl.style = CS_HREDRAW | CS_VREDRAW;
@@ -130,14 +129,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 void printDevice(HWND hwnd)
 {
-
-
 	HDC hdc;
 	PAINTSTRUCT paintstruct;
 	hdc = GetDC(hwnd);
 
-	TextOut(hdc, 0, 0, "asdf", 50);
+	TextOut(hdc, 0, 0, "called printDevice()", 20);
 
+	//TODO: add error message
 	if ((numDevices = SkyeTek_DiscoverDevices(&devices)) > 0)
 	{
 		if ((numReaders = SkyeTek_DiscoverReaders(devices, numDevices, &readers)) > 0)
@@ -156,6 +154,12 @@ void printDevice(HWND hwnd)
 				yPosition += 20;
 			}
 		}
+		else {
+			TextOut(hdc, xPosition, yPosition, "Could not discover reader", 30);
+		}
+	}
+	else {
+		TextOut(hdc, xPosition, yPosition, "Could not detect Devices", 20);
 	}
 }
 
@@ -163,7 +167,7 @@ void readTags(HWND hwnd)
 {
 	HDC hdc = GetDC(hwnd);
 
-	SkyeTek_SetAdditionalTimeout(readers[0]->lpDevice, 500);
+	//SkyeTek_SetAdditionalTimeout(readers[0]->lpDevice, 500);
 
 	while (reading)
 	{
@@ -188,5 +192,4 @@ void readTags(HWND hwnd)
 			yPosition += yCoordOffset;
 		}
 	}
-
 }

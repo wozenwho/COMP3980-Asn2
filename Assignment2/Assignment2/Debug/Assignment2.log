@@ -1,6 +1,5 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : The process cannot access the file 'c:\users\werz\desktop\c3980a2\assignment2\assignment2\debug\vc141.pdb' because it is being used by another process.
-  Main.cpp
-c:\users\werz\desktop\c3980a2\assignment2\assignment2\main.cpp(145): warning C4018: '<': signed/unsigned mismatch
-c:\users\werz\desktop\c3980a2\assignment2\assignment2\main.cpp(136): warning C4101: 'paintstruct': unreferenced local variable
+﻿  Main.cpp
+c:\users\werz\desktop\c3980a2\assignment2\assignment2\main.cpp(143): warning C4018: '<': signed/unsigned mismatch
+c:\users\werz\desktop\c3980a2\assignment2\assignment2\main.cpp(133): warning C4101: 'paintstruct': unreferenced local variable
   Assignment2.vcxproj -> C:\Users\Werz\Desktop\C3980A2\Assignment2\Debug\Assignment2.exe
   Assignment2.vcxproj -> C:\Users\Werz\Desktop\C3980A2\Assignment2\Debug\Assignment2.pdb (Partial PDB)
