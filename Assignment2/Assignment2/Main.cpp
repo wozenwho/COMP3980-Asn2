@@ -43,6 +43,9 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 DWORD WINAPI ReadRFID(LPVOID);
 void printDevice(HWND);
 void readTags(HWND);
+DWORD WINAPI ThreadProc(LPVOID);
+
+unsigned char SelectLoopCallback(LPSKYETEK_TAG, void *);
 
 /*
 WinMain() header
@@ -94,6 +97,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
 	PAINTSTRUCT paintstruct;
+	DWORD threadId;
 
 	switch (Message)
 	{
@@ -106,7 +110,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		case (MENU_START):
 			// When START menu button is clicked
-			readTags(hwnd);
+			reading = true;
+			readThread = CreateThread(NULL, 0, ThreadProc, (LPVOID)hwnd, 0, &threadId);
 			break;
 		case (MENU_STOP):
 			// When STOP menu button is clicked
@@ -192,4 +197,37 @@ void readTags(HWND hwnd)
 			yPosition += yCoordOffset;
 		}
 	}
+}
+
+
+
+
+
+
+unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
+{
+
+	HDC hdc = GetDC(hwnd);
+	if (reading)
+	{
+		if (lpTag != NULL)
+		{
+			TextOut(hdc, xPosition, yPosition, lpTag->friendly, 50);
+			yPosition += 20;
+		}
+	}
+	return(reading);
+}
+
+
+
+DWORD WINAPI ThreadProc(LPVOID v) {
+
+	SkyeTek_SelectTags(readers[0], AUTO_DETECT, SelectLoopCallback, 0, 1, NULL);
+	
+
+	SkyeTek_FreeReaders(readers, numReaders);
+	SkyeTek_FreeDevices(devices, numDevices);
+	return 0;
+
 }
