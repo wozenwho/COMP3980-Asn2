@@ -1,0 +1,5 @@
+﻿  Main.cpp
+c:\users\werz\desktop\c3980a2\assignment2\assignment2\main.cpp(146): warning C4018: '<': signed/unsigned mismatch
+c:\users\werz\desktop\c3980a2\assignment2\assignment2\main.cpp(137): warning C4101: 'paintstruct': unreferenced local variable
+  Assignment2.vcxproj -> C:\Users\Werz\Desktop\C3980A2\Assignment2\Debug\Assignment2.exe
+  Assignment2.vcxproj -> C:\Users\Werz\Desktop\C3980A2\Assignment2\Debug\Assignment2.pdb (Partial PDB)
