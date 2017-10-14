@@ -1,5 +1,6 @@
 ﻿  Main.cpp
-c:\users\werz\desktop\c3980a2\assignment2\assignment2\main.cpp(143): warning C4018: '<': signed/unsigned mismatch
-c:\users\werz\desktop\c3980a2\assignment2\assignment2\main.cpp(133): warning C4101: 'paintstruct': unreferenced local variable
+c:\users\werz\desktop\c3980a2\assignment2\assignment2\main.cpp(152): warning C4018: '<': signed/unsigned mismatch
+c:\users\werz\desktop\c3980a2\assignment2\assignment2\main.cpp(143): warning C4101: 'paintstruct': unreferenced local variable
+  LINK : C:\Users\Werz\Desktop\C3980A2\Assignment2\Debug\Assignment2.exe not found or not built by the last incremental link; performing full link
   Assignment2.vcxproj -> C:\Users\Werz\Desktop\C3980A2\Assignment2\Debug\Assignment2.exe
   Assignment2.vcxproj -> C:\Users\Werz\Desktop\C3980A2\Assignment2\Debug\Assignment2.pdb (Partial PDB)

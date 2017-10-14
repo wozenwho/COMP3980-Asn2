@@ -33,8 +33,8 @@ int loops = 100;
 int totalReads = 0;
 int failedReads = 0;
 int failedLoops = 0;
-unsigned int xPosition = 0;
-unsigned int yPosition = 0;
+unsigned int xPosition = tagStartingXPos;
+unsigned int yPosition = tagStartingYPos;
 
 BOOL reading = FALSE;
 
@@ -43,6 +43,9 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 DWORD WINAPI ReadRFID(LPVOID);
 void printDevice(HWND);
 void readTags(HWND);
+DWORD WINAPI ThreadProc(LPVOID);
+
+unsigned char SelectLoopCallback(LPSKYETEK_TAG, void *);
 
 /*
 WinMain() header
@@ -73,7 +76,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam
 	if (!RegisterClassEx(&Wcl))
 		return 0;
 
-	hwnd = CreateWindow(Name, Name, WS_OVERLAPPEDWINDOW, 10, 10, 800, 600, NULL, NULL, hInst, NULL);
+	hwnd = CreateWindow(Name, Name, WS_OVERLAPPEDWINDOW, 10, 10, windowWidth, windowHeight, NULL, NULL, hInst, NULL);
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
 
@@ -94,6 +97,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
 	PAINTSTRUCT paintstruct;
+	DWORD threadId;
 
 	switch (Message)
 	{
@@ -106,7 +110,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		case (MENU_START):
 			// When START menu button is clicked
-			readTags(hwnd);
+			reading = true;
+			readThread = CreateThread(NULL, 0, ThreadProc, (LPVOID)hwnd, 0, &threadId);
+			//WaitForSingleObject(readThread, 10000);
 			break;
 		case (MENU_STOP):
 			// When STOP menu button is clicked
@@ -127,45 +133,54 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+/*
+printDevice header
+*/
 void printDevice(HWND hwnd)
 {
-	HDC hdc;
+	unsigned int xPosition = deviceStartingXPos;
+	unsigned int yPosition = deviceStartingYPos;
+	
 	PAINTSTRUCT paintstruct;
-	hdc = GetDC(hwnd);
+	HDC hdc = GetDC(hwnd);
 
-	TextOut(hdc, 0, 0, "called printDevice()", 20);
+	TextOut(hdc, xPosition, yPosition, "called printDevice()", 20);
 
-	//TODO: add error message
 	if ((numDevices = SkyeTek_DiscoverDevices(&devices)) > 0)
 	{
 		if ((numReaders = SkyeTek_DiscoverReaders(devices, numDevices, &readers)) > 0)
 		{
 			for (ix = 0; ix < numReaders; ix++)
 			{
-				TextOut(hdc, xPosition, yPosition, readers[ix]->friendly, 50);
-				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[ix]->rid, 50);
-				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[ix]->model, 50);
-				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[ix]->manufacturer, 50);
-				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[ix]->firmware, 50);
-				yPosition += 20;
+				TextOut(hdc, xPosition, yPosition, readers[ix]->friendly, strlen(readers[ix]->friendly));
+				yPosition += yCoordOffset;
+				TextOut(hdc, xPosition, yPosition, readers[ix]->rid, strlen(readers[ix]->rid));
+				yPosition += yCoordOffset;
+				TextOut(hdc, xPosition, yPosition, readers[ix]->model, strlen(readers[ix]->model));
+				yPosition += yCoordOffset;
+				TextOut(hdc, xPosition, yPosition, readers[ix]->manufacturer, strlen(readers[ix]->manufacturer));
+				yPosition += yCoordOffset;
+				TextOut(hdc, xPosition, yPosition, readers[ix]->firmware, strlen(readers[ix]->firmware));
+				yPosition += yCoordOffset;
 			}
 		}
 		else {
-			TextOut(hdc, xPosition, yPosition, "Could not discover reader", 30);
+			TextOut(hdc, xPosition, yPosition, "Could not discover reader", 26);
 		}
 	}
 	else {
-		TextOut(hdc, xPosition, yPosition, "Could not detect Devices", 20);
+		TextOut(hdc, xPosition, yPosition, "Could not detect Devices", 25);
 	}
 }
+
+/*
+readTags header
 
 void readTags(HWND hwnd)
 {
 	HDC hdc = GetDC(hwnd);
+	unsigned int xPosition = tagStartingXPos;
+	unsigned int yPosition = tagStartingYPos;
 
 	//SkyeTek_SetAdditionalTimeout(readers[0]->lpDevice, 500);
 
@@ -190,6 +205,51 @@ void readTags(HWND hwnd)
 			yPosition += yCoordOffset;
 			TextOut(hdc, xPosition, yPosition, SkyeTek_GetTagTypeNameFromType(lpTags[i]->type), 50);
 			yPosition += yCoordOffset;
+			if (yPosition >= windowHeight - 20)
+			{
+
+				yPosition = tagStartingYPos;
+			}
 		}
 	}
+}
+*/
+
+
+
+
+/*
+SelectLoopCallback header
+*/
+unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
+{
+	HDC hdc = GetDC(hwnd);
+	if (reading)
+	{
+		if (lpTag != NULL)
+		{
+			TextOut(hdc, xPosition, yPosition, lpTag->friendly, 50);
+			yPosition += yCoordOffset;
+		}
+		if (yPosition >= windowHeight - 20) 
+		{
+			yPosition = tagStartingYPos;
+		}
+	}
+	return(reading);
+}
+
+
+/*
+ThreadProc header
+*/
+DWORD WINAPI ThreadProc(LPVOID v) {
+
+	SkyeTek_SelectTags(readers[0], AUTO_DETECT, SelectLoopCallback, 0, 1, NULL);
+	
+
+	SkyeTek_FreeReaders(readers, numReaders);
+	SkyeTek_FreeDevices(devices, numDevices);
+	return 0;
+
 }
