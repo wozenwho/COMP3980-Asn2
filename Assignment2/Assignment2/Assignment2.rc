@@ -1,0 +1,8 @@
+#include "header.h"
+
+CommandMenu MENU
+{
+MENUITEM "Connect",   MENU_CONNECT
+MENUITEM "START",     MENU_START
+MENUITEM "STOP",      MENU_STOP
+}

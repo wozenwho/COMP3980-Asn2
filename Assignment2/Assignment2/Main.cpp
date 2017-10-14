@@ -78,9 +78,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
 
-	printDevice(hwnd);
-	readTags(hwnd);
-
 
 	while (GetMessage(&Msg, NULL, 0, 0))
 	{
@@ -104,16 +101,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
-		case (MENU_FINDREADER):
-			// look for RFID reader
+		case (MENU_CONNECT):
+			// When CONNECT menu button is clicked
+			printDevice(hwnd);
 			break;
 		case (MENU_START):
 			// When START menu button is clicked
-			// TODO: start reading
+			readTags(hwnd);
 			break;
 		case (MENU_STOP):
 			// When STOP menu button is clicked
 			// TODO: close handle(?) of RFID reader
+			reading = FALSE;
 			break;
 		}
 		break;
@@ -164,7 +163,7 @@ void readTags(HWND hwnd)
 {
 	HDC hdc = GetDC(hwnd);
 
-	//SkyeTek_SetAdditionalTimeout(readers[0]->lpDevice, 5000);
+	SkyeTek_SetAdditionalTimeout(readers[0]->lpDevice, 500);
 
 	while (reading)
 	{
