@@ -112,6 +112,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			// When START menu button is clicked
 			reading = true;
 			readThread = CreateThread(NULL, 0, ThreadProc, (LPVOID)hwnd, 0, &threadId);
+			//WaitForSingleObject(readThread, 10000);
 			break;
 		case (MENU_STOP):
 			// When STOP menu button is clicked
