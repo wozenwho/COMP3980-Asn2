@@ -1,5 +1,9 @@
-﻿  Main.cpp
-c:\users\matt\term3\internetworking\assignment2\comp3980-asn2\assignment2\assignment2\main.cpp(149): warning C4018: '<': signed/unsigned mismatch
-c:\users\matt\term3\internetworking\assignment2\comp3980-asn2\assignment2\assignment2\main.cpp(139): warning C4101: 'paintstruct': unreferenced local variable
-  Assignment2.vcxproj -> C:\Users\Matt\Term3\Internetworking\assignment2\COMP3980-Asn2\Assignment2\Debug\Assignment2.exe
-  Assignment2.vcxproj -> C:\Users\Matt\Term3\Internetworking\assignment2\COMP3980-Asn2\Assignment2\Debug\Assignment2.pdb (Partial PDB)
+﻿  Session.cpp
+c:\users\werz\desktop\c3980a2\assignment2\assignment2\session.cpp(19): warning C4018: '<': signed/unsigned mismatch
+c:\users\werz\desktop\c3980a2\assignment2\assignment2\session.cpp(9): warning C4101: 'paintstruct': unreferenced local variable
+  Physical.cpp
+  Main.cpp
+  Application.cpp
+  Generating Code...
+  Assignment2.vcxproj -> C:\Users\Werz\Desktop\C3980A2\Assignment2\Debug\Assignment2.exe
+  Assignment2.vcxproj -> C:\Users\Werz\Desktop\C3980A2\Assignment2\Debug\Assignment2.pdb (Partial PDB)
