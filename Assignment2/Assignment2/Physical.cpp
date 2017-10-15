@@ -43,7 +43,7 @@ unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
 		if (lpTag != NULL)
 		{
 			TextOut(hdc, xPosition, yPosition, currTag, 50);
-			//			TextOut(hdc, xPosition, yPosition + 20, temp, 50);
+			yPosition += 20;
 
 		}
 	}
@@ -54,7 +54,17 @@ unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
 
 DWORD WINAPI ThreadProc(LPVOID v) {
 
-	SkyeTek_SelectTags(readers[0], AUTO_DETECT, SelectLoopCallback, 0, 1, NULL);
+	unsigned short localTags = 0;
+	unsigned short previousTags;
+	while (true) {
+		previousTags = localTags;
+		SkyeTek_GetTags(readers[0], AUTO_DETECT, &lpTags, &localTags);
+		if (localTags != previousTags) {
+			SkyeTek_SelectTags(readers[0], AUTO_DETECT, SelectLoopCallback, 1, 0, NULL);
+		}
+		
+	}
+	
 
 	SkyeTek_FreeReaders(readers, numReaders);
 	SkyeTek_FreeDevices(devices, numDevices);
