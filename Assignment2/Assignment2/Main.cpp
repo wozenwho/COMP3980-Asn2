@@ -137,19 +137,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		{
 		case (MENU_CONNECT):
 			// When CONNECT menu button is clicked
-			connectDevice();
-			break;
-		case (MENU_START):
-			// When START menu button is clicked
 			if (reading) {
 				break;
 			}
+			connectDevice();
 			readThread = CreateThread(NULL, 0, ThreadProc, (LPVOID)hwnd, 0, &threadId);
 			reading = true;
 			break;
-		case (MENU_STOP):
+		case (MENU_DISCONNECT):
+			// When START menu button is clicked
+			reading = false;
+			break;
+		case (MENU_QUIT):
 			// When STOP menu button is clicked
-			reading = FALSE;
+			reading = false;
+			PostQuitMessage(0);
 			break;
 		}
 		break;
@@ -157,6 +159,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hwnd, &paintstruct);
 		break;
 	case WM_DESTROY:
+		reading = false;
 		PostQuitMessage(0);
 		break;
 	default:
