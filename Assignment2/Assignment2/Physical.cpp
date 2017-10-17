@@ -61,7 +61,7 @@ unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
 	{
 		if (lpTag != NULL)
 		{
-			PrintTag(hwnd, currTag);
+			PrintTag(hwnd, tag);
 		}
 	}
 	return reading;

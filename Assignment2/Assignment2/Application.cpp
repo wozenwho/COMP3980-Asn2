@@ -56,16 +56,10 @@ char inputBuffer[512];
 
 LPSKYETEK_DEVICE *devices = NULL;
 LPSKYETEK_READER *readers = NULL;
-LPSKYETEK_TAG *lpTags = NULL;
 
-LPSKYETEK_DATA lpData = NULL;
-SKYETEK_STATUS st;
-unsigned short count;
 unsigned int numDevices;
 unsigned int numReaders;
-int totalTags = 0;
 
-int totalReads = 0;
 unsigned int xPosDevice = startingXPosDevice;
 unsigned int yPosDevice = startingYPosDevice;
 unsigned int xPosTag = startingXPosTag;
@@ -77,14 +71,18 @@ RECT tagDisplayArea = { tagDisplayArea.left = tagDisplayAreaLeft
 					  , tagDisplayArea.top = tagDisplayAreaTop
 					  , tagDisplayArea.right = tagDisplayAreaRight
 					  , tagDisplayArea.bottom = tagDisplayAreaBottom };
-RECT deviceDisplayArea;
+RECT deviceDisplayArea = { deviceDisplayArea.left = deviceDisplayAreaLeft
+						 , deviceDisplayArea.top = deviceDisplayAreaTop
+						 , deviceDisplayArea.right = deviceDisplayAreaRight
+						 , deviceDisplayArea.bottom = deviceDisplayAreaBottom };
 
 
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-DWORD WINAPI ReadRFID(LPVOID);
+
+
+/*DWORD WINAPI ReadRFID(LPVOID);
 void readTags(HWND);
 void PrintDevice(HWND, unsigned int);
-void PrintTag(HWND);
+void PrintTag(HWND); */
 
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -189,7 +187,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			if (reading) {
 				break;
 			}
-			if (connectDevice())
+			if (ConnectDevice())
 			{
 				readThread = CreateThread(NULL, 0, ThreadProc, (LPVOID)hwnd, 0, &threadId);
 				reading = true;
@@ -197,7 +195,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		case (MENU_DISCONNECT):
 			// When START menu button is clicked
-			reading = false;
+			DisconnectDevice(hwnd);
 			break;
 		case (MENU_QUIT):
 			// When STOP menu button is clicked
@@ -227,6 +225,9 @@ void PrintDevice(HWND hwnd, unsigned int readFlag)
 {
 	PAINTSTRUCT paintstruct;
 	HDC hdc = GetDC(hwnd);
+
+	//InvalidateRect(hwnd, &deviceDisplayArea, TRUE);
+
 	switch (readFlag)
 	{
 	case 0:
@@ -237,10 +238,6 @@ void PrintDevice(HWND hwnd, unsigned int readFlag)
 			TextOut(hdc, xPosDevice, yPosDevice, readers[i]->rid, 20);
 			yPosDevice += yCoordOffset;
 			TextOut(hdc, xPosDevice, yPosDevice, readers[i]->model, 20);
-			yPosDevice += yCoordOffset;
-			TextOut(hdc, xPosDevice, yPosDevice, readers[i]->manufacturer, 20);
-			yPosDevice += yCoordOffset;
-			TextOut(hdc, xPosDevice, yPosDevice, readers[i]->firmware, 20);
 			yPosDevice += yCoordOffset;
 		}
 		break;
@@ -254,6 +251,7 @@ void PrintDevice(HWND hwnd, unsigned int readFlag)
 		TextOut(hdc, xPosDevice, yPosDevice, "Could not detect Devices", 20);
 		break;
 	}
+	yPosDevice = startingYPosDevice;
 }
 
 /*

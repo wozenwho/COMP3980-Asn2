@@ -19,6 +19,7 @@ extern unsigned int numReaders;
 extern int totalTags;
 
 extern RECT tagDisplayArea;
+extern RECT deviceDisplayArea;
 
 extern int loops;
 extern int totalReads;

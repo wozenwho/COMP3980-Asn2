@@ -1,7 +1,6 @@
 #pragma once
 
 #define MENU_CONNECT			444
-
 #define MENU_DISCONNECT			555
 #define MENU_QUIT				666
 
@@ -16,6 +15,11 @@
 #define startingXPosTag			50
 #define startingYPosTag			120
 #define yCoordOffset			15
+
+#define deviceDisplayAreaLeft	0
+#define deviceDisplayAreaTop	0
+#define deviceDisplayAreaRight	400
+#define deviceDisplayAreaBottom	120
 
 #define tagDisplayAreaLeft		50
 #define tagDisplayAreaTop		120

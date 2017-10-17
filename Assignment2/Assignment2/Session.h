@@ -2,9 +2,7 @@
 //Connect to RFID
 
 
-void ConnectDevice();
+boolean ConnectDevice();
 
-void StartReading();
-
-void StopReading();
+void DisconnectDevice(HWND);
 

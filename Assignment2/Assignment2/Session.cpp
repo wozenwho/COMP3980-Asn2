@@ -7,7 +7,7 @@
 
 
 /*------------------------------------------------------------------------------------------------------------------
---FUNCTION: connectDevice
+--FUNCTION: ConnectDevice
 --
 --DATE : October 15, 2017
 --
@@ -25,39 +25,35 @@ HWND hwnd: the handle for the application window
 --NOTES :
 --This function is called to print the RFID device information to the screen
 ----------------------------------------------------------------------------------------------------------------------*/
-void ConnectDevice()
+boolean ConnectDevice()
 {
 	if ((numDevices = SkyeTek_DiscoverDevices(&devices)) > 0)
 	{
 		if ((numReaders = SkyeTek_DiscoverReaders(devices, numDevices, &readers)) > 0)
 		{
 			PrintDevice(hwnd, connectDeviceSuccess);
+			return true;
 		}
 		else {
 			PrintDevice(hwnd, connectDeviceNoReader);
+			return false;
 		}
 	}
 	else {
 		PrintDevice(hwnd, connectDeviceNoDevice);
+		return false;
 	}
-	return true;
-}
-
-
-/*
-StartReading header
-*/
-void StartReading() {
-	//un-suspend thread
-	//set reading = true
+	return false;
 }
 
 /*
 StopReading header
 */
-void StopReading()
+void DisconnectDevice(HWND hwnd)
 {
-	//suspend thread
-	//set reading = false
+	HDC hdc = GetDC(hwnd);
+	InvalidateRect(hwnd, &deviceDisplayArea, TRUE);
+	reading = false;	
+	TextOut(hdc, startingXPosDevice, startingYPosDevice, "Disconnected device", 20);
 }
 
