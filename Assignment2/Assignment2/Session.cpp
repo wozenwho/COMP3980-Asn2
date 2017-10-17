@@ -5,9 +5,26 @@
 #include "SkyeTekAPI.h"
 #include "Application.h"
 
-/*
-ConnectDevice header
-*/
+
+/*------------------------------------------------------------------------------------------------------------------
+--FUNCTION: connectDevice
+--
+--DATE : October 15, 2017
+--
+--REVISIONS : (Date and Description)
+--
+--DESIGNER : Matthew Shew, Wilson Hu
+--
+--PROGRAMMER : Matthew Shew, Wilson Hu
+--
+--INTERFACE : void printDevice(HWND hwnd)
+HWND hwnd: the handle for the application window
+--
+--RETURNS : void.
+--
+--NOTES :
+--This function is called to print the RFID device information to the screen
+----------------------------------------------------------------------------------------------------------------------*/
 void ConnectDevice()
 {
 	if ((numDevices = SkyeTek_DiscoverDevices(&devices)) > 0)
@@ -23,7 +40,9 @@ void ConnectDevice()
 	else {
 		PrintDevice(hwnd, connectDeviceNoDevice);
 	}
+	return true;
 }
+
 
 /*
 StartReading header
@@ -41,3 +60,4 @@ void StopReading()
 	//suspend thread
 	//set reading = false
 }
+

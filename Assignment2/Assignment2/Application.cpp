@@ -1,6 +1,28 @@
-/*
-HEADER
-*/
+/*------------------------------------------------------------------------------------------------------------------
+-- SOURCE FILE: Application.cpp - An application that will connect to local RFID device to read nearby tags and diplsay tag info to the screen
+--
+-- PROGRAM: Assignment2
+--
+-- FUNCTIONS:
+-- LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+--
+-- DATE: October 15, 2017
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Matthew Shew, Wilson Hu
+--
+-- PROGRAMMER: Matthew Shew, Wilson Hu
+--
+-- NOTES:
+-- The program will detect for local RFID devices and attempt to connect to the RFID device. The RFID will be set to read 
+-- mode and will listen constantly for any nearby tags. When a tag comes in proximity of the RFID, the RFID will read the 
+-- tag info and the program will print the tag info to the screen. When a user disconnects the RFID the program will 
+-- release any handles to connected devices and be ready to connect to another RFID device when prompted. If a user selects 
+-- "quit" the the program will release any handles to connected devices and the program will terminate closing the application window. 
+--
+----------------------------------------------------------------------------------------------------------------------*/
+
 
 #define STRICT
 #include <Windows.h>
@@ -13,15 +35,19 @@ HEADER
 #include "SkyeTekProtocol.h"
 
 #include "Header.h"
+
 #include "Common.h"
 #include "Application.h"
 #include "Physical.h"
 #include "Session.h"
 
 
+
 using namespace std;
 
 char Name[] = "C3980 Asn 2";
+
+
 HWND hwnd;
 
 
@@ -60,16 +86,35 @@ void readTags(HWND);
 void PrintDevice(HWND, unsigned int);
 void PrintTag(HWND);
 
-/*
-WinMain() header
-*/
+
+/*------------------------------------------------------------------------------------------------------------------
+--FUNCTION: WinMain
+--
+--DATE : October 15, 2017
+--
+--REVISIONS : (Date and Description)
+--
+--DESIGNER : Matthew Shew, Wilson Hu
+--
+--PROGRAMMER : Matthew Shew, Wilson Hu
+--
+--INTERFACE : int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam, int nCmdShow)
+HINSTANCE hInst: .
+HINSTANCE hprevInstance: .
+LPSTR lspszCmdParam: .
+int nCmdShow: .
+--
+--RETURNS : int.
+--
+--NOTES :
+--Call this function to begin the RFID application
+----------------------------------------------------------------------------------------------------------------------*/
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam, int nCmdShow)
 {
 	MSG Msg;
 	WNDCLASSEX Wcl;
 	PAINTSTRUCT paintstruct;
 	HDC hdc = BeginPaint(hwnd, &paintstruct);
-
 
 	Wcl.cbSize = sizeof(WNDCLASSEX);
 	Wcl.style = CS_HREDRAW | CS_VREDRAW;
@@ -89,6 +134,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam
 	if (!RegisterClassEx(&Wcl))
 		return 0;
 
+
 	hwnd = CreateWindow(Name, Name, WS_OVERLAPPEDWINDOW, 10, 10, windowWidth, windowHeight, NULL, NULL, hInst, NULL);
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
@@ -102,9 +148,31 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam
 	return Msg.wParam;
 }
 
-/*
-WndProc() Header
-*/
+
+/*------------------------------------------------------------------------------------------------------------------
+--FUNCTION: WndProc
+--
+--DATE : October 15, 2017
+--
+--REVISIONS : (Date and Description)
+--
+--DESIGNER : Matthew Shew, Wilson Hu
+--
+--PROGRAMMER : Matthew Shew, Wilson Hu
+--
+--INTERFACE : LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
+--				HWND hwnd: The handle to the window.
+--				UINT Message: .
+--				WPARAM wParam: The event that has occured.
+--				LPARAM lParam: .
+--
+--
+--RETURNS : LRESULT.
+--
+--NOTES :
+--This function is called when a user event occurs
+----------------------------------------------------------------------------------------------------------------------*/
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
@@ -118,24 +186,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		{
 		case (MENU_CONNECT):
 			// When CONNECT menu button is clicked
-			ConnectDevice();
-			break;
-		case (MENU_START):
-			// When START menu button is clicked
-			// TODO: call StartReading() in Session.cpp
 			if (reading) {
 				break;
 			}
-			// TODO: Refactor, CreateThread in WinMain suspended, unsuspend in this case
-			readThread = CreateThread(NULL, 0, ThreadProc, (LPVOID)hwnd, 0, &threadId);
-			reading = true;
-			//WaitForSingleObject(readThread, 10000);
+			if (connectDevice())
+			{
+				readThread = CreateThread(NULL, 0, ThreadProc, (LPVOID)hwnd, 0, &threadId);
+				reading = true;
+			}
 			break;
-		case (MENU_STOP):
+		case (MENU_DISCONNECT):
+			// When START menu button is clicked
+			reading = false;
+			break;
+		case (MENU_QUIT):
 			// When STOP menu button is clicked
-			// TODO: close handle(?) of RFID reader
-			// TODO: call StopReading() in Session.cpp
-			reading = FALSE;
+			reading = false;
+			PostQuitMessage(0);
 			break;
 		}
 		break;
@@ -143,6 +210,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hwnd, &paintstruct);
 		break;
 	case WM_DESTROY:
+		reading = false;
 		PostQuitMessage(0);
 		break;
 	default:
@@ -150,6 +218,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
+
 
 /*
 PrintDevice header

@@ -1,11 +1,14 @@
 #pragma once
 
 #define MENU_CONNECT			444
-#define MENU_START				555
-#define MENU_STOP				666
+
+#define MENU_DISCONNECT			555
+#define MENU_QUIT				666
+
 
 #define windowHeight			600
 #define windowWidth				400
+
 
 #define startingXPosDevice		0
 #define startingYPosDevice		0
