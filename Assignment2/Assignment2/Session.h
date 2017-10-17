@@ -1,4 +1,8 @@
 #pragma once
 //Connect to RFID
 
-void printDevice(HWND hwnd);
+void ConnectDevice();
+
+void StartReading();
+
+void StopReading();

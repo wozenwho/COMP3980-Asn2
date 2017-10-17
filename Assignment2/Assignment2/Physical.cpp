@@ -1,10 +1,16 @@
 #include <Windows.h>
+#include <vector>
 #include "Common.h"
 #include "Header.h"
+#include "Application.h"
 #include "SkyeTekAPI.h"
 #include "SkyeTekProtocol.h"
 
+std::vector<char*> usedTags;
 
+/*
+SelectLoopCallback header
+*/
 unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
 {
 	HDC hdc = GetDC(hwnd);
@@ -33,25 +39,21 @@ unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
 			}
 		}
 	}
-
-
-
-
 	//char * temp = (char*)lpTag->id;
 	if (reading)
 	{
 		if (lpTag != NULL)
 		{
-			TextOut(hdc, xPosition, yPosition, currTag, 50);
-			yPosition += 20;
+			PrintTag(hwnd, currTag);
 
 		}
 	}
 	return reading;
 }
 
-
-
+/*
+ThreadProc header
+*/
 DWORD WINAPI ThreadProc(LPVOID v) {
 
 	unsigned short localTags = 0;
@@ -60,14 +62,15 @@ DWORD WINAPI ThreadProc(LPVOID v) {
 		previousTags = localTags;
 		SkyeTek_GetTags(readers[0], AUTO_DETECT, &lpTags, &localTags);
 		if (localTags != previousTags) {
+			if (InvalidateRect(hwnd, &tagDisplayArea, TRUE)) {
+				xPosTag = startingXPosTag;
+				yPosTag = startingYPosTag;
+			}
 			SkyeTek_SelectTags(readers[0], AUTO_DETECT, SelectLoopCallback, 1, 0, NULL);
 		}
 		
 	}
-	
-
 	SkyeTek_FreeReaders(readers, numReaders);
 	SkyeTek_FreeDevices(devices, numDevices);
 	return 0;
-
 }
