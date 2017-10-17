@@ -1,30 +1,25 @@
 /*------------------------------------------------------------------------------------------------------------------
--- SOURCE FILE: SerialComm.c - An application that will communicate between 2 computers via serial port
+-- SOURCE FILE: Application.cpp - An application that will connect to local RFID device to read nearby tags and diplsay tag info to the screen
 --
--- PROGRAM: Assignment1
+-- PROGRAM: Assignment2
 --
 -- FUNCTIONS:
 -- LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
--- DWORD WINAPI reading(LPVOID);
--- void setupMenu(HWND);
--- void read(HWND);
--- void updateSettings(WPARAM, HMENU);
--- void connect(HWND);
 --
---
--- DATE: October 3, 2017
+-- DATE: October 15, 2017
 --
 -- REVISIONS: (Date and Description)
 --
--- DESIGNER: Matthew Shew
+-- DESIGNER: Matthew Shew, Wilson Hu
 --
--- PROGRAMMER: Matthew Shew
+-- PROGRAMMER: Matthew Shew, Wilson Hu
 --
 -- NOTES:
--- The program will create a connection between 2 computers using a serial port and user specified settings to open the port.
--- A thread will constantly listen for incoming charcters as the user types in characters on the keyboard to send to the other
--- computer. A user will begin in command mode where they can chose their port options and when ready, choose "connect mode" to
--- open the port and communicate with the other computer.
+-- The program will detect for local RFID devices and attempt to connect to the RFID device. The RFID will be set to read 
+-- mode and will listen constantly for any nearby tags. When a tag comes in proximity of the RFID, the RFID will read the 
+-- tag info and the program will print the tag info to the screen. When a user disconnects the RFID the program will 
+-- release any handles to connected devices and be ready to connect to another RFID device when prompted. If a user selects 
+-- "quit" the the program will release any handles to connected devices and the program will terminate closing the application window. 
 --
 ----------------------------------------------------------------------------------------------------------------------*/
 
