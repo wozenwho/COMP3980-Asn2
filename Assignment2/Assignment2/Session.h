@@ -1,4 +1,10 @@
 #pragma once
 //Connect to RFID
 
-bool connectDevice();
+
+void ConnectDevice();
+
+void StartReading();
+
+void StopReading();
+

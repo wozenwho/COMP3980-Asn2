@@ -23,41 +23,68 @@
 --
 ----------------------------------------------------------------------------------------------------------------------*/
 
+
 #define STRICT
 #include <Windows.h>
 #include <stdio.h>
 #include <string>
 #include <string.h>
+#include <vector>
 
 #include "SkyeTekAPI.h"
 #include "SkyeTekProtocol.h"
 
 #include "Header.h"
+
+#include "Common.h"
+#include "Application.h"
 #include "Physical.h"
 #include "Session.h"
-#include "Common.h"
+
 
 
 using namespace std;
 
 char Name[] = "C3980 Asn 2";
 
+
 HWND hwnd;
+
+
 HANDLE readThread;
+char inputBuffer[512];
 
 LPSKYETEK_DEVICE *devices = NULL;
 LPSKYETEK_READER *readers = NULL;
+LPSKYETEK_TAG *lpTags = NULL;
 
+LPSKYETEK_DATA lpData = NULL;
+SKYETEK_STATUS st;
+unsigned short count;
 unsigned int numDevices;
 unsigned int numReaders;
+int totalTags = 0;
 
-unsigned int xPosition = 0;
-unsigned int yPosition = 0;
+int totalReads = 0;
+unsigned int xPosDevice = startingXPosDevice;
+unsigned int yPosDevice = startingYPosDevice;
+unsigned int xPosTag = startingXPosTag;
+unsigned int yPosTag = startingYPosTag;
 
 BOOL reading = FALSE;
 
+RECT tagDisplayArea = { tagDisplayArea.left = tagDisplayAreaLeft
+					  , tagDisplayArea.top = tagDisplayAreaTop
+					  , tagDisplayArea.right = tagDisplayAreaRight
+					  , tagDisplayArea.bottom = tagDisplayAreaBottom };
+RECT deviceDisplayArea;
+
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+DWORD WINAPI ReadRFID(LPVOID);
+void readTags(HWND);
+void PrintDevice(HWND, unsigned int);
+void PrintTag(HWND);
 
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -107,10 +134,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam
 	if (!RegisterClassEx(&Wcl))
 		return 0;
 
-	hwnd = CreateWindow(Name, Name, WS_OVERLAPPEDWINDOW, 10, 10, 800, 600, NULL, NULL, hInst, NULL);
+
+	hwnd = CreateWindow(Name, Name, WS_OVERLAPPEDWINDOW, 10, 10, windowWidth, windowHeight, NULL, NULL, hInst, NULL);
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
-
 
 	while (GetMessage(&Msg, NULL, 0, 0))
 	{
@@ -145,6 +172,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam
 --NOTES :
 --This function is called when a user event occurs
 ----------------------------------------------------------------------------------------------------------------------*/
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc;
@@ -191,3 +219,49 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+
+/*
+PrintDevice header
+*/
+void PrintDevice(HWND hwnd, unsigned int readFlag)
+{
+	PAINTSTRUCT paintstruct;
+	HDC hdc = GetDC(hwnd);
+	switch (readFlag)
+	{
+	case 0:
+		for (int i = 0; i < numReaders; i++)
+		{
+			TextOut(hdc, xPosDevice, yPosDevice, readers[i]->friendly, 20);
+			yPosDevice += yCoordOffset;
+			TextOut(hdc, xPosDevice, yPosDevice, readers[i]->rid, 20);
+			yPosDevice += yCoordOffset;
+			TextOut(hdc, xPosDevice, yPosDevice, readers[i]->model, 20);
+			yPosDevice += yCoordOffset;
+			TextOut(hdc, xPosDevice, yPosDevice, readers[i]->manufacturer, 20);
+			yPosDevice += yCoordOffset;
+			TextOut(hdc, xPosDevice, yPosDevice, readers[i]->firmware, 20);
+			yPosDevice += yCoordOffset;
+		}
+		break;
+	case 1:
+		TextOut(hdc, xPosDevice, yPosDevice, "Could not discover reader", 30);
+		break;
+	case 2:
+		TextOut(hdc, xPosDevice, yPosDevice, "Could not detect Devices", 20);
+		break;
+	default:
+		TextOut(hdc, xPosDevice, yPosDevice, "Could not detect Devices", 20);
+		break;
+	}
+}
+
+/*
+PrintTag header
+*/
+void PrintTag(HWND hwnd, char* currTag)
+{
+	HDC hdc = GetDC(hwnd);
+	TextOut(hdc, xPosTag, yPosTag, currTag, 50);
+	yPosTag += 20;
+}

@@ -1,7 +1,10 @@
 #include <Windows.h>
+#include "Header.h"
 #include "Common.h"
 #include "Session.h"
 #include "SkyeTekAPI.h"
+#include "Application.h"
+
 
 /*------------------------------------------------------------------------------------------------------------------
 --FUNCTION: connectDevice
@@ -22,42 +25,39 @@ HWND hwnd: the handle for the application window
 --NOTES :
 --This function is called to print the RFID device information to the screen
 ----------------------------------------------------------------------------------------------------------------------*/
-bool connectDevice()
+void ConnectDevice()
 {
-	HDC hdc;
-	PAINTSTRUCT paintstruct;
-	hdc = GetDC(hwnd);
-
-	TextOut(hdc, 0, 0, "called connectDevice()", 20);
-
-	//TODO: add error message
 	if ((numDevices = SkyeTek_DiscoverDevices(&devices)) > 0)
 	{
 		if ((numReaders = SkyeTek_DiscoverReaders(devices, numDevices, &readers)) > 0)
 		{
-			for (int i = 0; i < numReaders; i++)
-			{
-				TextOut(hdc, xPosition, yPosition, readers[i]->friendly, 50);
-				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[i]->rid, 50);
-				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[i]->model, 50);
-				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[i]->manufacturer, 50);
-				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[i]->firmware, 50);
-				yPosition += 20;
-			}
+			PrintDevice(hwnd, connectDeviceSuccess);
 		}
 		else {
-			TextOut(hdc, xPosition, yPosition, "Could not discover reader", 30);
-			return false;
+			PrintDevice(hwnd, connectDeviceNoReader);
 		}
 	}
 	else {
-		TextOut(hdc, xPosition, yPosition, "Could not detect Devices", 20);
-		return false;
+		PrintDevice(hwnd, connectDeviceNoDevice);
 	}
 	return true;
+}
+
+
+/*
+StartReading header
+*/
+void StartReading() {
+	//un-suspend thread
+	//set reading = true
+}
+
+/*
+StopReading header
+*/
+void StopReading()
+{
+	//suspend thread
+	//set reading = false
 }
 
