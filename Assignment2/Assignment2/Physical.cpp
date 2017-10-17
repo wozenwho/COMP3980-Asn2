@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include "Common.h"
 #include "Header.h"
+#include "Physical.h"
 #include "SkyeTekAPI.h"
 #include "SkyeTekProtocol.h"
 
@@ -91,7 +92,7 @@ DWORD WINAPI ThreadProc(LPVOID v) {
 	unsigned short previousTags;
 	LPSKYETEK_TAG *lpTags;
 
-	while (true)
+	while (reading)
 	{
 		previousTags = localTags;
 		SkyeTek_GetTags(readers[0], AUTO_DETECT, &lpTags, &localTags);

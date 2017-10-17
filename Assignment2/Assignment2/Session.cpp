@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include "Common.h"
+#include "Session.h"
 #include "SkyeTekAPI.h"
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -21,7 +22,7 @@ HWND hwnd: the handle for the application window
 --NOTES :
 --This function is called to print the RFID device information to the screen
 ----------------------------------------------------------------------------------------------------------------------*/
-void connectDevice()
+bool connectDevice()
 {
 	HDC hdc;
 	PAINTSTRUCT paintstruct;
@@ -50,10 +51,13 @@ void connectDevice()
 		}
 		else {
 			TextOut(hdc, xPosition, yPosition, "Could not discover reader", 30);
+			return false;
 		}
 	}
 	else {
 		TextOut(hdc, xPosition, yPosition, "Could not detect Devices", 20);
+		return false;
 	}
+	return true;
 }
 
