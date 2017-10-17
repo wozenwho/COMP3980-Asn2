@@ -2,31 +2,49 @@
 #include "Common.h"
 #include "SkyeTekAPI.h"
 
-
-void printDevice(HWND hwnd)
+/*------------------------------------------------------------------------------------------------------------------
+--FUNCTION: connectDevice
+--
+--DATE : October 15, 2017
+--
+--REVISIONS : (Date and Description)
+--
+--DESIGNER : Matthew Shew, Wilson Hu
+--
+--PROGRAMMER : Matthew Shew, Wilson Hu
+--
+--INTERFACE : void printDevice(HWND hwnd)
+HWND hwnd: the handle for the application window
+--
+--RETURNS : void.
+--
+--NOTES :
+--This function is called to print the RFID device information to the screen
+----------------------------------------------------------------------------------------------------------------------*/
+void connectDevice()
 {
 	HDC hdc;
 	PAINTSTRUCT paintstruct;
 	hdc = GetDC(hwnd);
 
-	TextOut(hdc, 0, 0, "called printDevice()", 20);
+	TextOut(hdc, 0, 0, "called connectDevice()", 20);
 
 	//TODO: add error message
 	if ((numDevices = SkyeTek_DiscoverDevices(&devices)) > 0)
 	{
 		if ((numReaders = SkyeTek_DiscoverReaders(devices, numDevices, &readers)) > 0)
 		{
-			for (ix = 0; ix < numReaders; ix++)
+			for (int i = 0; i < numReaders; i++)
 			{
-				TextOut(hdc, xPosition, yPosition, readers[ix]->friendly, 50);
+				TextOut(hdc, xPosition, yPosition, readers[i]->friendly, 50);
 				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[ix]->rid, 50);
+				TextOut(hdc, xPosition, yPosition, readers[i]->rid, 50);
 				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[ix]->model, 50);
+				TextOut(hdc, xPosition, yPosition, readers[i]->model, 50);
 				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[ix]->manufacturer, 50);
+				TextOut(hdc, xPosition, yPosition, readers[i]->manufacturer, 50);
 				yPosition += 20;
-				TextOut(hdc, xPosition, yPosition, readers[ix]->firmware, 50);
+				TextOut(hdc, xPosition, yPosition, readers[i]->firmware, 50);
 				yPosition += 20;
 			}
 		}
@@ -39,36 +57,3 @@ void printDevice(HWND hwnd)
 	}
 }
 
-/*
-void readTags(HWND hwnd)
-{
-HDC hdc = GetDC(hwnd);
-
-//SkyeTek_SetAdditionalTimeout(readers[0]->lpDevice, 500);
-
-while (reading)
-{
-lpTags = NULL;
-count = 0;
-st = SkyeTek_GetTags(readers[0], AUTO_DETECT, &lpTags, &count);
-if (st == SKYETEK_TIMEOUT)
-{
-TextOut(hdc, xPosition, yPosition, "SKYETEK TAGS TIMED OUT.", 20);
-yPosition += yCoordOffset;
-}
-else if (st != SKYETEK_SUCCESS)
-{
-TextOut(hdc, xPosition, yPosition, "SKYETEK_GETTAGS FAILED.", 20);
-}
-
-for (size_t i = 0; i < count; i++)
-{
-TextOut(hdc, xPosition, yPosition, lpTags[i]->friendly, 50);
-yPosition += yCoordOffset;
-TextOut(hdc, xPosition, yPosition, SkyeTek_GetTagTypeNameFromType(lpTags[i]->type), 50);
-yPosition += yCoordOffset;
-}
-}
-}
-
-*/
