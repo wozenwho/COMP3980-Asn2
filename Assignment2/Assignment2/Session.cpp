@@ -47,13 +47,12 @@ boolean ConnectDevice()
 }
 
 /*
-StopReading header
+DisconnectDevice header
 */
 void DisconnectDevice(HWND hwnd)
 {
 	HDC hdc = GetDC(hwnd);
 	InvalidateRect(hwnd, &deviceDisplayArea, TRUE);
 	reading = false;	
-	TextOut(hdc, startingXPosDevice, startingYPosDevice, "Disconnected device", 20);
 }
 

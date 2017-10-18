@@ -35,55 +35,39 @@
 #include "SkyeTekProtocol.h"
 
 #include "Header.h"
-
 #include "Common.h"
 #include "Application.h"
 #include "Physical.h"
 #include "Session.h"
 
-
-
 using namespace std;
 
 char Name[] = "C3980 Asn 2";
-
-
 HWND hwnd;
-
-
 HANDLE readThread;
 char inputBuffer[512];
 
 LPSKYETEK_DEVICE *devices = NULL;
 LPSKYETEK_READER *readers = NULL;
-
 unsigned int numDevices;
 unsigned int numReaders;
-
 unsigned int xPosDevice = startingXPosDevice;
 unsigned int yPosDevice = startingYPosDevice;
 unsigned int xPosTag = startingXPosTag;
 unsigned int yPosTag = startingYPosTag;
-
 BOOL reading = FALSE;
-
+/* RECT struct that holds coordinates to display tags' information
+*/
 RECT tagDisplayArea = { tagDisplayArea.left = tagDisplayAreaLeft
 					  , tagDisplayArea.top = tagDisplayAreaTop
 					  , tagDisplayArea.right = tagDisplayAreaRight
 					  , tagDisplayArea.bottom = tagDisplayAreaBottom };
+/* RECT struct that holds coordinates to display device information
+*/
 RECT deviceDisplayArea = { deviceDisplayArea.left = deviceDisplayAreaLeft
 						 , deviceDisplayArea.top = deviceDisplayAreaTop
 						 , deviceDisplayArea.right = deviceDisplayAreaRight
 						 , deviceDisplayArea.bottom = deviceDisplayAreaBottom };
-
-
-
-
-/*DWORD WINAPI ReadRFID(LPVOID);
-void readTags(HWND);
-void PrintDevice(HWND, unsigned int);
-void PrintTag(HWND); */
-
 
 /*------------------------------------------------------------------------------------------------------------------
 --FUNCTION: WinMain
@@ -183,7 +167,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		switch (LOWORD(wParam))
 		{
 		case (MENU_CONNECT):
-			// When CONNECT menu button is clicked
 			if (reading) {
 				break;
 			}
@@ -194,11 +177,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		case (MENU_DISCONNECT):
-			// When START menu button is clicked
 			DisconnectDevice(hwnd);
 			break;
 		case (MENU_QUIT):
-			// When STOP menu button is clicked
 			reading = false;
 			PostQuitMessage(0);
 			break;
@@ -216,7 +197,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
-
 
 /*
 PrintDevice header

@@ -4,10 +4,8 @@
 #define MENU_DISCONNECT			555
 #define MENU_QUIT				666
 
-
 #define windowHeight			600
 #define windowWidth				400
-
 
 #define startingXPosDevice		0
 #define startingYPosDevice		0

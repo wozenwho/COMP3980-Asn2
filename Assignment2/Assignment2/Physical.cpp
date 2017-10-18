@@ -1,13 +1,11 @@
 #include <Windows.h>
 #include <vector>
+#include "SkyeTekAPI.h"
+#include "SkyeTekProtocol.h"
 #include "Common.h"
 #include "Header.h"
 #include "Physical.h"
 #include "Application.h"
-#include "SkyeTekAPI.h"
-#include "SkyeTekProtocol.h"
-
-std::vector<char*> usedTags;
 
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -66,8 +64,6 @@ unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
 	}
 	return reading;
 }
-
-
 
 /*------------------------------------------------------------------------------------------------------------------
 --FUNCTION: ThreadProc
