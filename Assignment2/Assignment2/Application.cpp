@@ -47,8 +47,8 @@ HWND hwnd;
 HANDLE readThread;
 char inputBuffer[512];
 
-LPSKYETEK_DEVICE *devices = NULL;
-LPSKYETEK_READER *readers = NULL;
+LPSKYETEK_DEVICE* devices = NULL;
+LPSKYETEK_READER* readers = NULL;
 unsigned int numDevices;
 unsigned int numReaders;
 unsigned int xPosDevice = startingXPosDevice;
