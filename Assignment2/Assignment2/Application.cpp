@@ -1,24 +1,24 @@
 /*------------------------------------------------------------------------------------------------------------------
--- SOURCE FILE: Application.cpp - An application that will connect to local RFID device to read nearby tags and diplsay tag info to the screen
+--  SOURCE FILE: Application.cpp - An application that will connect to local RFID device to read nearby tags and diplsay tag info to the screen
 --
--- PROGRAM: Assignment2
+--  PROGRAM:	Assignment2
 --
--- FUNCTIONS:
--- LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+--  FUNCTIONS:
+--				LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 --
--- DATE: October 15, 2017
+--  DATE:		October 15, 2017
 --
--- REVISIONS: (Date and Description)
+--  REVISIONS:	(Date and Description)
 --
--- DESIGNER: Matthew Shew, Wilson Hu
+--  DESIGNER:	Matthew Shew, Wilson Hu
 --
--- PROGRAMMER: Matthew Shew, Wilson Hu
+--  PROGRAMMER: Matthew Shew, Wilson Hu
 --
--- NOTES:
--- The program will detect for local RFID devices and attempt to connect to the RFID device. The RFID will be set to read 
--- mode and will listen constantly for any nearby tags. When a tag comes in proximity of the RFID, the RFID will read the 
--- tag info and the program will print the tag info to the screen. When a user disconnects the RFID the program will 
--- release any handles to connected devices and be ready to connect to another RFID device when prompted. If a user selects 
+--  NOTES:
+--  The program will detect for local RFID devices and attempt to connect to the RFID device. The RFID will be set to read 
+--  mode and will listen constantly for any nearby tags. When a tag comes in proximity of the RFID, the RFID will read the 
+--  tag info and the program will print the tag info to the screen. When a user disconnects the RFID the program will 
+--  release any handles to connected devices and be ready to connect to another RFID device when prompted. If a user selects 
 -- "quit" the the program will release any handles to connected devices and the program will terminate closing the application window. 
 --
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -70,26 +70,29 @@ RECT deviceDisplayArea = { deviceDisplayArea.left = deviceDisplayAreaLeft
 						 , deviceDisplayArea.bottom = deviceDisplayAreaBottom };
 
 /*------------------------------------------------------------------------------------------------------------------
---FUNCTION: WinMain
+--  FUNCTION:	WinMain
 --
---DATE : October 15, 2017
+--  DATE:			October 15, 2017
 --
---REVISIONS : (Date and Description)
+--  REVISIONS:
 --
---DESIGNER : Matthew Shew, Wilson Hu
+--  DESIGNER:		Matthew Shew, Wilson Hu
 --
---PROGRAMMER : Matthew Shew, Wilson Hu
+--  PROGRAMMER:		Matthew Shew, Wilson Hu
 --
---INTERFACE : int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam, int nCmdShow)
-HINSTANCE hInst: .
-HINSTANCE hprevInstance: .
-LPSTR lspszCmdParam: .
-int nCmdShow: .
+--  INTERFACE:		int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam, int nCmdShow)
+--						HINSTANCE hInst: the handle to the current instance of the program
+--						HINSTANCE hprevInstance: the handle to the previous instance of the program
+--						LPSTR lspszCmdParam: command line for the application
+--						int nCmdShow: control parameter that determines how the window is shown
 --
---RETURNS : int.
+--  RETURNS:		Returns an int value based on function's success. 
+--						Returns 0 if the window fails to register. 
+--						Returns Msg.wParam otherwise. 
 --
---NOTES :
---Call this function to begin the RFID application
+--  NOTES:
+--  This function is the entry point into the program, and creates the window and menu for the program.
+--  It contains the core messaging loop that runs for the program's lifetime. 
 ----------------------------------------------------------------------------------------------------------------------*/
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam, int nCmdShow)
 {
@@ -132,27 +135,31 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hprevInstance, LPSTR lspszCmdParam
 
 
 /*------------------------------------------------------------------------------------------------------------------
---FUNCTION: WndProc
+--  FUNCTION: WndProc
 --
---DATE : October 15, 2017
+--  DATE:			October 15, 2017
 --
---REVISIONS : (Date and Description)
+--  REVISIONS:		
 --
---DESIGNER : Matthew Shew, Wilson Hu
+--  DESIGNER:		Matthew Shew, Wilson Hu
 --
---PROGRAMMER : Matthew Shew, Wilson Hu
+--  PROGRAMMER:		Matthew Shew, Wilson Hu
 --
---INTERFACE : LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
---				HWND hwnd: The handle to the window.
---				UINT Message: .
---				WPARAM wParam: The event that has occured.
---				LPARAM lParam: .
+--  INTERFACE:		LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
+--						HWND hwnd: the handle to the window
+--						UINT Message: the message generated by an event
+--						WPARAM wParam: additional message information
+--						LPARAM lParam: additional message information
 --
 --
---RETURNS : LRESULT.
+--  RETURNS:		LRESULT.
 --
---NOTES :
---This function is called when a user event occurs
+--  NOTES:
+--  This function is called when a Windows event occurs. This function processes the message and 
+--	executes one case based on the message type. The messages it processes are: menu button clicks, 
+--	paint, and destroy. The menu buttons are used to connect or disconnect the device, and to quit the
+--	program. The paint message is called to repaint different areas of the window (which are initialized
+--	in the RECT structures), and the destroy message closes the program.
 ----------------------------------------------------------------------------------------------------------------------*/
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
@@ -198,19 +205,37 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-/*
-PrintDevice header
-*/
+/*------------------------------------------------------------------------------------------------------------------
+--	FUNCTION: PrintDevice
+--
+--	DATE:			October 15, 2017
+--
+--	REVISIONS:		(Date and Description)
+--
+--	DESIGNER:		Matthew Shew, Wilson Hu
+--
+--	PROGRAMMER:		Matthew Shew, Wilson Hu
+--
+--	INTERFACE:		void PrintDevice(HWND hwnd, unsigned int readFlag)
+--						HWND hwnd: handle to the window that PrintDevice will print to
+--						unsigned int readFlag: int flag that ConnectDevice uses to indicate connection status
+--												flags are defined in Header.h
+--
+--	RETURNS:		void
+--
+--	NOTES:
+--	This function is called by ConnectDevice(). It prints a message to the window that displays the 
+--	reader's status. The readFlag parameter is used to print a corresponding status message
+--  (success or fail) based on ConnectDevice's success.
+----------------------------------------------------------------------------------------------------------------------*/
 void PrintDevice(HWND hwnd, unsigned int readFlag)
 {
 	PAINTSTRUCT paintstruct;
 	HDC hdc = GetDC(hwnd);
 
-	//InvalidateRect(hwnd, &deviceDisplayArea, TRUE);
-
 	switch (readFlag)
 	{
-	case 0:
+	case connectDeviceSuccess:
 		for (int i = 0; i < numReaders; i++)
 		{
 			TextOut(hdc, xPosDevice, yPosDevice, readers[i]->friendly, 20);
@@ -221,10 +246,10 @@ void PrintDevice(HWND hwnd, unsigned int readFlag)
 			yPosDevice += yCoordOffset;
 		}
 		break;
-	case 1:
+	case connectDeviceNoReader:
 		TextOut(hdc, xPosDevice, yPosDevice, "Could not discover reader", 30);
 		break;
-	case 2:
+	case connectDeviceNoDevice:
 		TextOut(hdc, xPosDevice, yPosDevice, "Could not detect Devices", 20);
 		break;
 	default:
@@ -234,12 +259,31 @@ void PrintDevice(HWND hwnd, unsigned int readFlag)
 	yPosDevice = startingYPosDevice;
 }
 
-/*
-PrintTag header
-*/
+/*------------------------------------------------------------------------------------------------------------------
+--	FUNCTION: PrintTag
+--
+--	DATE:		October 15, 2017
+--
+--	REVISIONS:	(Date and Description)
+--
+--	DESIGNER:	Matthew Shew, Wilson Hu
+--
+--	PROGRAMMER: Matthew Shew, Wilson Hu
+--
+--	INTERFACE:	void PrintTag(HWND hwnd, char* currTag)
+--					HWND hwnd: the handle to the window
+--					char* currTag: char pointer to a string containing a tag's data
+--
+--	RETURNS:	void
+--
+--	NOTES:
+--	This function is called by SelectLoopCallback. It is called in a loop to print each tag detected by the reader.
+--  The function prints the string stored in currTag to the window given by the handle hwnd. This function increases
+--  yPosTag by yCoordOffset each time to avoid overlapping messages. Each message is printed below the previous.
+----------------------------------------------------------------------------------------------------------------------*/
 void PrintTag(HWND hwnd, char* currTag)
 {
 	HDC hdc = GetDC(hwnd);
 	TextOut(hdc, xPosTag, yPosTag, currTag, 50);
-	yPosTag += 20;
+	yPosTag += yCoordOffset;
 }
