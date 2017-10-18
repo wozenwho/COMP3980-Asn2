@@ -19,9 +19,9 @@
 --
 --  PROGRAMMER:		Matthew Shew, Wilson Hu
 --
---  INTERFACE:		unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
+--  INTERFACE:		unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void* user)
 						LPSKYETEK_TAG lpTag: The handle for a nearby tag
-						void *user: void pointer that can be used to pass user data to be called back
+						void* user: void pointer that can be used to pass user data to be called back
 										at a later time. This field is not used in this function.
 --
 --  RETURNS:		unsigned char reading, the current state of the program (reading or not reading)
@@ -31,7 +31,7 @@
 --  the reader's vicinity. The function processes the tag friendly field to remove null characters
 --  and calls PrintTag to display the tag to the window.
 ----------------------------------------------------------------------------------------------------------------------*/
-unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
+unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void* user)
 {
 	HDC hdc = GetDC(hwnd);
 	char tag[50];
@@ -96,7 +96,7 @@ DWORD WINAPI ThreadProc(LPVOID v) {
 
 	unsigned short localTags = 0;
 	unsigned short previousTags;
-	LPSKYETEK_TAG *lpTags;
+	LPSKYETEK_TAG* lpTags;
 
 	while (reading)
 	{
