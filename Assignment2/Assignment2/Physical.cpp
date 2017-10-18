@@ -9,24 +9,27 @@
 
 
 /*------------------------------------------------------------------------------------------------------------------
---FUNCTION: SelectLoopCallBack
+--  FUNCTION: SelectLoopCallBack
 --
---DATE : October 15, 2017
+--  DATE:			October 15, 2017
 --
---REVISIONS : (Date and Description)
+--  REVISIONS:		(Date and Description)
 --
---DESIGNER : Matthew Shew, Wilson Hu
+--  DESIGNER:		Matthew Shew, Wilson Hu
 --
---PROGRAMMER : Matthew Shew, Wilson Hu
+--  PROGRAMMER:		Matthew Shew, Wilson Hu
 --
---INTERFACE : unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
-LPSKYETEK_TAG lpTag: The handle for a nearby tag
-void *user: user
+--  INTERFACE:		unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
+						LPSKYETEK_TAG lpTag: The handle for a nearby tag
+						void *user: void pointer that can be used to pass user data to be called back
+										at a later time. This field is not used in this function.
 --
---RETURNS : unsigned char.
+--  RETURNS:		unsigned char reading, the current state of the program (reading or not reading)
 --
---NOTES :
---This Function is called when the SKYTEK
+--  NOTES:
+--  This function is called by the SkyeTek API SkyeTek_SelectTags function. It is called for each tag in
+--  the reader's vicinity. The function processes the tag friendly field to remove null characters
+--  and calls PrintTag to display the tag to the window.
 ----------------------------------------------------------------------------------------------------------------------*/
 unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
 {
@@ -66,23 +69,28 @@ unsigned char SelectLoopCallback(LPSKYETEK_TAG lpTag, void *user)
 }
 
 /*------------------------------------------------------------------------------------------------------------------
---FUNCTION: ThreadProc
+--  FUNCTION: ThreadProc
 --
---DATE : October 15, 2017
+--  DATE:			October 15, 2017
 --
---REVISIONS : (Date and Description)
+--  REVISIONS:		(Date and Description)
 --
---DESIGNER : Matthew Shew, Wilson Hu
+--  DESIGNER:		Matthew Shew, Wilson Hu
 --
---PROGRAMMER : Matthew Shew, Wilson Hu
+--  PROGRAMMER:		Matthew Shew, Wilson Hu
 --
---INTERFACE : DWORD WINAPI ThreadProc(LPVOID v)
-LPVOID v: Null for this application
+--  INTERFACE:		DWORD WINAPI ThreadProc(LPVOID v)
+						LPVOID v: Null for this application
 --
---RETURNS : DWORD.
+--  RETURNS:		Returns 0 when the function ends. 
 --
---NOTES :
---This function is called when a thread is created to set the RFID device to read mode to listen for nearby tags
+--  NOTES:
+--  This function is called when a thread is created to set the RFID device to read mode to listen for nearby tags. 
+--	While the program is in read mode, it continuously reads for nearby tags. Each iteration of the read loop compares
+--	the current number of tags read to the previous number. If the number of nearby tags changes, it stores each tag
+--	in lpTags and calls the SkyeTek_SelectTags API function to process each nearby tag.
+--
+--	When reading is set to false, the loop terminates and the function frees the connected readers and devices.
 ----------------------------------------------------------------------------------------------------------------------*/
 DWORD WINAPI ThreadProc(LPVOID v) {
 
